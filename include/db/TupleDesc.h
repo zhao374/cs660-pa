@@ -37,6 +37,9 @@ namespace db {
      */
     class TupleDesc {
         // TODO pa1.1: add private members
+        int size;
+        std::vector<std::string> names;
+        std::vector<Types::Type> types;
         using iterator = void*; // replace void* with a container iterator or a custom iterator implementation
     public:
         TupleDesc() {}

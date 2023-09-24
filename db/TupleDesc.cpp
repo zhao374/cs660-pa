@@ -1,5 +1,6 @@
 #include <db/TupleDesc.h>
-
+#include <functional>
+#include <sstream>
 using namespace db;
 
 //
@@ -7,10 +8,12 @@ using namespace db;
 //
 
 bool TDItem::operator==(const TDItem &other) const {
+    return other.fieldType==this->fieldType &&other.fieldName==this->fieldName;
     // TODO pa1.1: implement
 }
 
 std::size_t std::hash<TDItem>::operator()(const TDItem &r) const {
+    return std::hash<std::string>{}(r.fieldName) ^ std::hash<std::string>{}(to_string(r.fieldType));
     // TODO pa1.1: implement
 }
 
@@ -20,6 +23,7 @@ std::size_t std::hash<TDItem>::operator()(const TDItem &r) const {
 
 // TODO pa1.1: implement
 TupleDesc::TupleDesc(const std::vector<Types::Type> &types) {
+
 }
 
 // TODO pa1.1: implement
