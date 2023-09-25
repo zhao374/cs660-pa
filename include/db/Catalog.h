@@ -4,6 +4,7 @@
 #include <db/TupleDesc.h>
 #include <db/DbFile.h>
 #include <db/Utility.h>
+#include <unordered_map>
 
 namespace db {
 
@@ -23,6 +24,8 @@ namespace db {
      * to a catalog that reads a catalog table from disk.
      */
     class Catalog {
+        std::unordered_map<int, Table> tablesById;
+        std::unordered_map<std::string, int> idsByName;
         // TODO pa1.2: add private members
     public:
         // disable copy
