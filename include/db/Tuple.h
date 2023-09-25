@@ -12,8 +12,11 @@ namespace db {
      * and contain Field objects with the data for each field.
      */
     class Tuple {
+        TupleDesc tupleDesc;
+        const RecordId *recordId;
+        std::vector<std::unique_ptr<Field>> fields;
         // TODO pa1.1: add private members
-        using iterator = void*; // replace void* with a container iterator or a custom iterator implementation
+        using iterator = std::vector<std::unique_ptr<Field>>::const_iterator; // replace void* with a container iterator or a custom iterator implementation
     public:
         Tuple() = default;
 
