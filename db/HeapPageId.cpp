@@ -7,7 +7,7 @@ using namespace db;
 //
 
 // TODO pa1.4: implement
-HeapPageId::HeapPageId(int tableId, int pgNo) : tableId(tableId), pgNo(pgNo) {
+HeapPageId::HeapPageId(int tableId, int pgNo) {
 }
 
 int HeapPageId::getTableId() const {

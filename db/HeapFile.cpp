@@ -14,7 +14,7 @@ using namespace db;
 //
 
 // TODO pa1.5: implement
-HeapFile::HeapFile(const char *fname, const TupleDesc &td) : td(td) {
+HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
 }
 
 int HeapFile::getId() const {
