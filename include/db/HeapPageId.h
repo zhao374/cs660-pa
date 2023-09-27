@@ -11,6 +11,8 @@ namespace db {
      */
     class HeapPageId : public PageId {
         // TODO pa1.4: Add private members
+        int tableId;
+        int pgNo;
     public:
         /**
          * Constructor. Create a page id structure for a specific page of a
@@ -45,6 +47,7 @@ namespace db {
             data[1] = pageNumber();
             return 2 * sizeof(int);
         };
+
     };
 }
 

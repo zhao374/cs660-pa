@@ -12,6 +12,8 @@ namespace db {
      * specific table.
      */
     class RecordId {
+        const PageId* pageId;
+        int tupleno;
         // TODO pa1.4: add private members
     public:
         RecordId() = default;

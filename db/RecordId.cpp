@@ -9,6 +9,9 @@ using namespace db;
 
 // TODO pa1.4: implement
 RecordId::RecordId(const PageId *pid, int tupleno) {
+    this->pageId=pid;
+    this->tupleno=tupleno;
+
 }
 
 bool RecordId::operator==(const RecordId &other) const {
