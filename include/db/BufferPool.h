@@ -28,6 +28,8 @@ namespace db {
         static constexpr int PAGE_SIZE = 4096;
         /** Bytes per page, including header. */
         int pageSize = PAGE_SIZE;
+        std::vector<Page*> buffer;
+        int maxPage;
         // TODO pa1.3: add private members
     public:
         BufferPool(const BufferPool &) = delete;

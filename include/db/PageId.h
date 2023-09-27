@@ -2,6 +2,7 @@
 #define DB_PAGEID_H
 
 #include <stdexcept>
+#include <functional> // for std::hash
 
 namespace db {
     /**
