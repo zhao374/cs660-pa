@@ -6,6 +6,39 @@
 #include <db/RecordId.h>
 
 namespace db {
+
+    /**
+ * Iterator for TupleDesc
+ */
+    class TupleIterator {
+        size_t index;
+        size_t size;
+        const std::vector<Field*> &fields;
+    public:
+        TupleIterator(size_t i, size_t s, const std::vector<Field*> &fields)
+                : index(i), size(s), fields(fields) {
+            while (index < size) {
+                index++;
+            }
+        }
+
+        bool operator!=(const TupleIterator &other) const {
+            return index != other.index;
+        }
+
+        TupleIterator &operator++() {
+            do {
+                index++;
+            } while (index < size);
+            return *this;
+        }
+
+        const Field &operator*() const {
+            return *fields[index];
+        }
+    };
+
+
     /**
      * Tuple maintains information about the contents of a tuple.
      * Tuples have a specified schema specified by a TupleDesc object
@@ -14,9 +47,9 @@ namespace db {
     class Tuple {
         TupleDesc tupleDesc;
         const RecordId *recordId;
-        std::vector<std::unique_ptr<Field>> fields;
+        std::vector<Field*> fields;
         // TODO pa1.1: add private members
-        using iterator = std::vector<std::unique_ptr<Field>>::const_iterator; // replace void* with a container iterator or a custom iterator implementation
+        using iterator = TupleIterator; // replace void* with a container iterator or a custom iterator implementation
     public:
         Tuple() = default;
 

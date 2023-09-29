@@ -13,37 +13,43 @@ void Catalog::addTable(DbFile *file, const std::string &name, const std::string 
 }
 
 int Catalog::getTableId(const std::string &name) const {
-    auto iter = idsByName.find(name);
-    if(iter != idsByName.end())
-        return iter->second;
+    return idsByName.at(name);
+
+//    auto iter = idsByName.find(name);
+//    if(iter != idsByName.end())
+//        return iter->second;
     // TODO pa1.2: implement
 }
 
 const TupleDesc &Catalog::getTupleDesc(int tableid) const {
-    auto iter = tablesById.find(tableid);
-    if(iter != tablesById.end())
-        return iter->second.file->getTupleDesc();
+    return tablesById.at(tableid).file->getTupleDesc();
+//    auto iter = tablesById.find(tableid);
+//    if(iter != tablesById.end())
+//        return iter->second.file->getTupleDesc();
     // TODO pa1.2: implement
 }
 
 DbFile *Catalog::getDatabaseFile(int tableid) const {
-    auto iter = tablesById.find(tableid);
-    if(iter != tablesById.end())
-        return iter->second.file;
+    return tablesById.at(tableid).file;
+//    auto iter = tablesById.find(tableid);
+//    if(iter != tablesById.end())
+//        return iter->second.file;
     // TODO pa1.2: implement
 }
 
 std::string Catalog::getPrimaryKey(int tableid) const {
-    auto iter = tablesById.find(tableid);
-    if(iter != tablesById.end())
-        return iter->second.pkeyField;
+    return tablesById.at(tableid).pkeyField
+//    auto iter = tablesById.find(tableid);
+//    if(iter != tablesById.end())
+//        return iter->second.pkeyField;
     // TODO pa1.2: implement
 }
 
 std::string Catalog::getTableName(int id) const {
-    auto iter = tablesById.find(id);
-    if(iter != tablesById.end())
-        return iter->second.name;
+    return tablesById.at(id).name;
+//    auto iter = tablesById.find(id);
+//    if(iter != tablesById.end())
+//        return iter->second.name;
     // TODO pa1.2: implement
 }
 

@@ -25,11 +25,42 @@ namespace db {
 
         TDItem(Types::Type t, std::string n) : fieldType(t), fieldName(std::move(n)) {};
 
-        bool operator==(const TDItem &other) const;
+        bool operator==(const TDItem &other) const { return (*this == other); }
 
         bool operator!=(const TDItem &other) const { return !(*this == other); }
 
         std::string to_string() const { return fieldName + "(" + Types::to_string(fieldType) + ")"; };
+    };
+
+    /**
+     * Iterator for TupleDesc
+     */
+    class TDIterator {
+        size_t index;
+        size_t size;
+        const std::vector<TDItem> &items;
+    public:
+        TDIterator(size_t i, size_t s, const std::vector<TDItem> &items)
+                : index(i), size(s), items(items) {
+            while (index < size) {
+                index++;
+            }
+        }
+
+        bool operator!=(const TDIterator &other) const {
+            return index != other.index;
+        }
+
+        TDIterator &operator++() {
+            do {
+                index++;
+            } while (index < size);
+            return *this;
+        }
+
+        const TDItem &operator*() const {
+            return items[index];
+        }
     };
 
     /**
@@ -38,11 +69,9 @@ namespace db {
     class TupleDesc {
         // TODO pa1.1: add private members
         size_t size;
-        std::vector<std::string> names;
-        std::vector<Types::Type> types;
         std::vector<TDItem> items;
 
-        using iterator = std::vector<TDItem>::const_iterator; // replace void* with a container iterator or a custom iterator implementation
+        using iterator = TDIterator; // replace void* with a container iterator or a custom iterator implementation
     public:
         TupleDesc() {}
 
@@ -106,6 +135,8 @@ namespace db {
          *         Note that tuples from a given TupleDesc are of a fixed size.
          */
         size_t getSize() const;
+
+        std::vector<TDItem> getItems() const;
 
         /**
          * Merge two TupleDescs into one, with td1.numFields + td2.numFields fields,

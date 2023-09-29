@@ -1,4 +1,6 @@
 #include <db/Tuple.h>
+#include "db/IntField.h"
+#include "db/StringField.h"
 
 using namespace db;
 
@@ -34,17 +36,17 @@ const Field &Tuple::getField(int i) const {
 }
 
 void Tuple::setField(int i, const Field *f) {
-    *fields[i]=*f;
+    fields[i]= (Field *) &f;
     // TODO pa1.1: implement
 }
 
 Tuple::iterator Tuple::begin() const {
-    return fields.begin();
+    return TupleIterator{0, fields.size(), fields};
     // TODO pa1.1: implement
 }
 
 Tuple::iterator Tuple::end() const {
-    return fields.end();
+    TupleIterator{fields.size(), fields.size(), fields};
     // TODO pa1.1: implement
 }
 

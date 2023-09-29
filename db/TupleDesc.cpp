@@ -8,13 +8,8 @@ using namespace db;
 // TDItem
 //
 
-bool TDItem::operator==(const TDItem &other) const {
-    return other.fieldType==this->fieldType &&other.fieldName==this->fieldName;
-    // TODO pa1.1: implement
-}
-
 std::size_t std::hash<TDItem>::operator()(const TDItem &r) const {
-    return std::hash<std::string>{}(r.fieldName+to_string(r.fieldType));
+    return std::hash<std::string>{}(r.to_string());
     // TODO pa1.1: implement
 }
 
@@ -24,23 +19,19 @@ std::size_t std::hash<TDItem>::operator()(const TDItem &r) const {
 
 // TODO pa1.1: implement
 TupleDesc::TupleDesc(const std::vector<Types::Type> &types) {
-    this->types=types;
     size=0;
     for(int i=0;i<types.size();i++){
         size+= Types::getLen(types[i]);
-        this->names.emplace_back(std::to_string(i));
-        this->items.emplace_back(types[i],this->names[i]);
+        this->items.emplace_back(types[i], std::to_string(i));
     }
 }
 
 // TODO pa1.1: implement
 TupleDesc::TupleDesc(const std::vector<Types::Type> &types, const std::vector<std::string> &names) {
-    this->types=types;
-    this->names=names;
     size=0;
-    for(int i=0;i<types.size();i++){
-        size+= Types::getLen(this->types[i])+this->names[i].size();
-        this->items.emplace_back(this->types[i],this->names[i]);
+    for(int i=0; i<types.size(); i++){
+        size+=Types::getLen(types[i]);
+        this->items.emplace_back(types[i], names[i]);
     }
 }
 
@@ -50,19 +41,20 @@ size_t TupleDesc::numFields() const {
 }
 
 std::string TupleDesc::getFieldName(size_t i) const {
-    return this->names[i];
+    return this->items[i].fieldName;
     // TODO pa1.1: implement
 }
 
 Types::Type TupleDesc::getFieldType(size_t i) const {
-    return this->types[i];
+    return this->items[i].fieldType;
     // TODO pa1.1: implement
 }
 
 int TupleDesc::fieldNameToIndex(const std::string &fieldName) const {
-    for(int i = 0; i < items.size(); i++)
-        if(items[i].fieldName == fieldName)
-            return i;
+    for(int i = 0; i < items.size(); i++) {
+        if(items[i].fieldName == fieldName) return i;
+    }
+
     return -1; // If field name is not found
     // TODO pa1.1: implement
 }
@@ -70,6 +62,10 @@ int TupleDesc::fieldNameToIndex(const std::string &fieldName) const {
 size_t TupleDesc::getSize() const {
     return this->size;
     // TODO pa1.1: implement
+}
+
+std::vector<TDItem> TupleDesc::getItems() const {
+    return this->items;
 }
 
 TupleDesc TupleDesc::merge(const TupleDesc &td1, const TupleDesc &td2) {
@@ -101,11 +97,11 @@ bool TupleDesc::operator==(const TupleDesc &other) const {
 }
 
 TupleDesc::iterator TupleDesc::begin() const {
-    return items.begin();
+    return TDIterator{0, items.size(), items};
 }
 
 TupleDesc::iterator TupleDesc::end() const {
-    return items.end();
+    return TDIterator{items.size(), items.size(), items};
 }
 
 std::size_t std::hash<db::TupleDesc>::operator()(const db::TupleDesc &td) const {

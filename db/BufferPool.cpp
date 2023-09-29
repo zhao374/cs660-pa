@@ -5,7 +5,6 @@ using namespace db;
 
 // TODO pa1.3: implement
 BufferPool::BufferPool(int numPages) {
-    //pagesize=4096不知道啥用处
     this->maxPage=numPages;
 }
 
@@ -16,10 +15,12 @@ Page *BufferPool::getPage(const TransactionId &tid, PageId *pid) {
             return page;
         }
     }
-    if(buffer.size() >= maxPage)
-        evictPage();
     Page *newPage= Database::getCatalog().getDatabaseFile(pid->getTableId())->readPage(*pid);
     buffer.push_back(newPage);
+
+    if(buffer.size() >= maxPage)
+        evictPage();
+
     return newPage;
     // TODO pa1.3: implement
 }
