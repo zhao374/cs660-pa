@@ -1,5 +1,5 @@
 #include <db/HeapPage.h>
-
+#include <cmath> // for std::floor
 using namespace db;
 
 HeapPageIterator::HeapPageIterator(int i, const HeapPage *page) {
@@ -45,14 +45,18 @@ HeapPage::HeapPage(const HeapPageId &id, uint8_t *data) : pid(id) {
 }
 
 int HeapPage::getNumTuples() {
+    //floor((BufferPool.getPageSize()*8) / (tuple size * 8 + 1))
+    return std::floor((Database::getBufferPool().getPageSize()*8)/(td.getSize()*8+1));
     // TODO pa1.4: implement
 }
 
 int HeapPage::getHeaderSize() {
+    return Database::getBufferPool().getPageSize()-this->getNumTuples()*td.getSize();
     // TODO pa1.4: implement
 }
 
 PageId &HeapPage::getId() {
+    return this->pid;
     // TODO pa1.4: implement
 }
 
@@ -101,6 +105,7 @@ uint8_t *HeapPage::createEmptyPageData() {
 }
 
 int HeapPage::getNumEmptySlots() const {
+
     // TODO pa1.4: implement
 }
 

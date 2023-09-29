@@ -34,7 +34,7 @@ const Field &Tuple::getField(int i) const {
 }
 
 void Tuple::setField(int i, const Field *f) {
-    *fields[i]=*f;
+    fields[i]=*f;
     // TODO pa1.1: implement
 }
 
