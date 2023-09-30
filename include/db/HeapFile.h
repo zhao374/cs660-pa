@@ -10,14 +10,31 @@
 
 namespace db {
     class HeapFileIterator {
+        size_t index;
+        size_t size;
+        const std::vector<Page> &fields;
         // TODO pa1.5: add private members
     public:
-        HeapFileIterator(/* TODO pa1.5: add parameters */);
-        bool operator!=(const HeapFileIterator &other) const;
+        HeapFileIterator(size_t i, size_t s, const std::vector<Page> &fields)
+                : index(i), size(s), fields(fields) {
+            while (index < size) {
+                index++;
+            }
+        }
+        bool operator!=(const HeapFileIterator &other) const {
+            return index != other.index;
+        }
 
-        Tuple &operator*() const;
+        HeapFileIterator &operator++() {
+            do {
+                index++;
+            } while (index < size);
+            return *this;
+        }
 
-        HeapFileIterator &operator++();
+        const Page &operator*() const {
+            return fields[index];
+        }
     };
 
     /**
@@ -33,6 +50,7 @@ namespace db {
     class HeapFile : public DbFile {
         TupleDesc td;
         std::string fname;
+        int tableId;
         std::vector<Page> pages;
 
         // TODO pa1.5: add private members

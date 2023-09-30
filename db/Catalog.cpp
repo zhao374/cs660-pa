@@ -38,7 +38,7 @@ DbFile *Catalog::getDatabaseFile(int tableid) const {
 }
 
 std::string Catalog::getPrimaryKey(int tableid) const {
-    return tablesById.at(tableid).pkeyField
+    return tablesById.at(tableid).pkeyField;
 //    auto iter = tablesById.find(tableid);
 //    if(iter != tablesById.end())
 //        return iter->second.pkeyField;

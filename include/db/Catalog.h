@@ -24,8 +24,8 @@ namespace db {
      * to a catalog that reads a catalog table from disk.
      */
     class Catalog {
-        std::unordered_map<int, Table> tablesById;
-        std::unordered_map<std::string, int> idsByName;
+        static std::unordered_map<int, Table> tablesById;
+        static std::unordered_map<std::string, int> idsByName;
         // TODO pa1.2: add private members
     public:
         // disable copy

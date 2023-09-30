@@ -13,9 +13,27 @@ using namespace db;
 // HeapFile
 //
 
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
+unsigned int hashFunction(const char* str) {
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
+    }
+
+    return static_cast<int>(hash);
+}
+
+
 // TODO pa1.5: implement
 HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
     this->td = td;
+
+    this->tableId = hashFunction(fname);
     this->fname = fname;
 }
 
@@ -30,44 +48,21 @@ const TupleDesc &HeapFile::getTupleDesc() const {
 }
 
 Page *HeapFile::readPage(const PageId &pid) {
-    return Database::getBufferPool().getPage(TransactionId(),&pid);
+    return Database::getBufferPool().getPage(TransactionId(), &pid);
     // TODO pa1.5: implement
 }
 
 int HeapFile::getNumPages() {
-    int id = Database::getCatalog().getTableId(fname);
-    int pageNum=0;
-
-    auto it = Database::getCatalog().
-
-    //return Database::getCatalog().getDatabaseFile(id)->getNumPages();
+    return pages.size();
     // TODO pa1.5: implement
 }
 
 HeapFileIterator HeapFile::begin() const {
+    return HeapFileIterator{0, pages.size(), pages};
     // TODO pa1.5: implement
 }
 
 HeapFileIterator HeapFile::end() const {
     // TODO pa1.5: implement
-}
-
-//
-// HeapFileIterator
-//
-
-// TODO pa1.5: implement
-HeapFileIterator::HeapFileIterator(/* TODO pa1.5: add parameters */) {
-}
-
-bool HeapFileIterator::operator!=(const HeapFileIterator &other) const {
-    // TODO pa1.5: implement
-}
-
-Tuple &HeapFileIterator::operator*() const {
-    // TODO pa1.5: implement
-}
-
-HeapFileIterator &HeapFileIterator::operator++() {
-    // TODO pa1.5: implement
+    return HeapFileIterator{pages.size(), pages.size(), pages};
 }

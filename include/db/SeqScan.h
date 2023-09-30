@@ -12,15 +12,32 @@
 
 namespace db {
     class SeqScanIterator {
+        size_t index;
+        size_t size;
+        const std::vector<Tuple> &fields;
         // TODO pa1.6: add private members
     public:
-        SeqScanIterator(/* TODO pa1.6: add parameters */);
+        SeqScanIterator(size_t i, size_t s, const std::vector<Tuple> &fields)
+                : index(i), size(s), fields(fields) {
+            while (index < size) {
+                index++;
+            }
+        }
 
-        bool operator!=(const SeqScanIterator &other) const;
+        bool operator!=(const SeqScanIterator &other) const {
+            return index != other.index;
+        }
 
-        SeqScanIterator &operator++();
+        SeqScanIterator &operator++() {
+            do {
+                index++;
+            } while (index < size);
+            return *this;
+        }
 
-        const Tuple &operator*() const;
+        const Tuple &operator*() const {
+            return fields[index];
+        }
     };
 
     /**
@@ -30,6 +47,9 @@ namespace db {
      */
     class SeqScan {
         using iterator = SeqScanIterator;
+        TransactionId tid;
+        int tableId;
+        std::string tableAlias;
         // TODO pa1.6: add private members
     public:
 

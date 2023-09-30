@@ -10,12 +10,14 @@ TEST(CatalogTest, GetTupleDesc) {
     int id1 = db::Utility::randomInt();
     std::string name1 = db::Utility::generateUUID();
     db::Database::getCatalog().clear();
+    printf("1\n");
     db::SkeletonFile file(id1, db::Utility::getTupleDesc(2));
     db::Database::getCatalog().addTable(&file, name1);
 
+    printf("2\n");
     db::TupleDesc expected = db::Utility::getTupleDesc(2);
     db::TupleDesc actual = db::Database::getCatalog().getTupleDesc(id1);
-
+    printf("3\n");
     EXPECT_EQ(expected, actual);
 }
 

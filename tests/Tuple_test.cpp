@@ -61,7 +61,7 @@ TEST(TupleTests, Iterate) {
     tup.setField(4, &field4);
     int i = 0;
     for (const auto &item: tup) {
-        EXPECT_EQ(item->getType(), types[i]);
+        EXPECT_EQ(item.getType(), types[i]);
         if (i == 0 || i == 2 || i == 3) {
             if (const auto *field = dynamic_cast<const db::IntField *>(&tup.getField(i))) {
                 EXPECT_EQ(field->getValue(), i);
