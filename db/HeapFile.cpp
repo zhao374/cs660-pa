@@ -58,11 +58,14 @@ int HeapFile::getNumPages() {
 }
 
 HeapFileIterator HeapFile::begin() const {
-    return HeapFileIterator{0, pages.size(), pages};
+    // TODO find a way to get all the pages in a file and read them into tuples
+    std::vector<Tuple> myTuples;
+    return HeapFileIterator{0, myTuples.size(), myTuples};
     // TODO pa1.5: implement
 }
 
 HeapFileIterator HeapFile::end() const {
     // TODO pa1.5: implement
-    return HeapFileIterator{pages.size(), pages.size(), pages};
+    std::vector<Tuple> myTuples;
+    return HeapFileIterator{myTuples.size(), myTuples.size(), myTuples};
 }
