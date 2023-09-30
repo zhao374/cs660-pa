@@ -31,6 +31,10 @@ namespace db {
      * @author Sam Madden
      */
     class HeapFile : public DbFile {
+        TupleDesc td;
+        std::string fname;
+        std::vector<Page> pages;
+
         // TODO pa1.5: add private members
     public:
 

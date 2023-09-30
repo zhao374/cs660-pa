@@ -61,7 +61,7 @@ namespace db {
          * @param tid the ID of the transaction requesting the page
          * @param pid the ID of the requested page
          */
-        Page *getPage(const TransactionId &tid, PageId *pid);
+        Page *getPage(const TransactionId &tid, const PageId *pid);
 
         int getPageSize() const { return pageSize; }
 

@@ -14,23 +14,33 @@ using namespace db;
 //
 
 // TODO pa1.5: implement
-HeapFile::HeapFile(const char *fname, const TupleDesc &td) : td(td) {
-
+HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
+    this->td = td;
+    this->fname = fname;
 }
 
 int HeapFile::getId() const {
+    return Database::getCatalog().getTableId(this->fname);
     // TODO pa1.5: implement
 }
 
 const TupleDesc &HeapFile::getTupleDesc() const {
+    return td;
     // TODO pa1.5: implement
 }
 
 Page *HeapFile::readPage(const PageId &pid) {
+    return Database::getBufferPool().getPage(TransactionId(),&pid);
     // TODO pa1.5: implement
 }
 
 int HeapFile::getNumPages() {
+    int id = Database::getCatalog().getTableId(fname);
+    int pageNum=0;
+
+    auto it = Database::getCatalog().
+
+    //return Database::getCatalog().getDatabaseFile(id)->getNumPages();
     // TODO pa1.5: implement
 }
 

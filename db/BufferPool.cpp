@@ -8,7 +8,7 @@ BufferPool::BufferPool(int numPages) {
     this->maxPage=numPages;
 }
 
-Page *BufferPool::getPage(const TransactionId &tid, PageId *pid) {
+Page *BufferPool::getPage(const TransactionId &tid,const PageId *pid) {
     //tid是啥， lock是啥。他那个.h file没有implement啊，不知道transactionid是啥
     for(const auto &page:this->buffer){
         if(page->getId()==*pid){
