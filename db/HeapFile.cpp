@@ -38,7 +38,7 @@ HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
 }
 
 int HeapFile::getId() const {
-    return Database::getCatalog().getTableId(this->fname);
+    return tableId;
     // TODO pa1.5: implement
 }
 

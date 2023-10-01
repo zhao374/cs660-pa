@@ -16,7 +16,7 @@ RecordId::RecordId(const PageId *pid, int tupleno) {
 }
 
 bool RecordId::operator==(const RecordId &other) const {
-    return (this->pageId==other.getPageId())&&(this->tupleno==other.getTupleno());
+    return (this->pageId->getTableId()==other.getPageId()->getTableId()) && (this->pageId->pageNumber()==other.getPageId()->pageNumber()) &&(this->tupleno==other.getTupleno());
     // TODO pa1.4: implement
 }
 

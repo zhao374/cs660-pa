@@ -44,9 +44,6 @@ namespace db {
     public:
         TDIterator(size_t i, size_t s, const std::vector<TDItem> &items)
                 : index(i), size(s), items(items) {
-            while (index < size) {
-                index++;
-            }
         }
 
         bool operator!=(const TDIterator &other) const {
@@ -54,9 +51,7 @@ namespace db {
         }
 
         TDIterator &operator++() {
-            do {
-                index++;
-            } while (index < size);
+            index++;
             return *this;
         }
 
