@@ -8,6 +8,9 @@ using namespace db;
 
 // TODO pa1.4: implement
 HeapPageId::HeapPageId(int tableId, int pgNo) {
+    this->tableId=tableId;
+    this->pgNo=pgNo;
+
 }
 
 int HeapPageId::getTableId() const {
