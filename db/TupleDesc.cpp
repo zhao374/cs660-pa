@@ -55,7 +55,7 @@ int TupleDesc::fieldNameToIndex(const std::string &fieldName) const {
     for(int i = 0; i < items.size(); i++) {
         if(items[i].fieldName == fieldName) return i;
     }
-
+    throw std::invalid_argument("invalid name!");
     return -1; // If field name is not found
     // TODO pa1.1: implement
 }

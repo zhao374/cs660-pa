@@ -13,10 +13,10 @@ namespace db {
     class TupleIterator {
         size_t index;
         size_t size;
-        const std::vector<Field*> &fields;
+        const std::vector<const Field*> &fields;
     public:
-        TupleIterator(size_t i, size_t s, const std::vector<Field*> &fields)
-                : index(i), size(s), fields(fields) {
+        TupleIterator(size_t i, size_t s, const std::vector<const Field*> &fields)
+                : index(i), size(s),  fields(fields) {
             while (index < size) {
                 index++;
             }
@@ -47,7 +47,7 @@ namespace db {
     class Tuple {
         TupleDesc tupleDesc;
         const RecordId *recordId;
-        std::vector<Field*> fields;
+        std::vector<const Field*> fields;
         // TODO pa1.1: add private members
         using iterator = TupleIterator; // replace void* with a container iterator or a custom iterator implementation
     public:
