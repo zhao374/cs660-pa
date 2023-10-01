@@ -117,7 +117,10 @@ int HeapPage::getNumEmptySlots() const {
 }
 
 bool HeapPage::isSlotUsed(int i) const {
-    if (header[i] == 1) return true;
+    int a = i / 8;
+    int b = i % 8;
+    uint8_t data = header[a];
+    if ((data & (1<<b)) >> b == 1) return true;
     else return false;
     // TODO pa1.4: implement
 }

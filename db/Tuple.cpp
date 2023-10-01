@@ -40,6 +40,10 @@ void Tuple::setField(int i, const Field *f) {
     // TODO pa1.1: implement
 }
 
+int Tuple::isEmpty() {
+    return (fields.size() == 0);
+}
+
 Tuple::iterator Tuple::begin() const {
     return TupleIterator{0, fields.size(), fields};
     // TODO pa1.1: implement

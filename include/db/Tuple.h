@@ -100,6 +100,8 @@ namespace db {
          * @return a string representation of this tuple.
          */
         std::string to_string() const;
+
+        int isEmpty();
     };
 
 }
