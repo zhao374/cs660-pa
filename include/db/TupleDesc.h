@@ -25,7 +25,9 @@ namespace db {
 
         TDItem(Types::Type t, std::string n) : fieldType(t), fieldName(std::move(n)) {};
 
-        bool operator==(const TDItem &other) const { return (*this == other); }
+        bool operator==(const TDItem &other) const {
+            return (fieldType == other.fieldType) && fieldName == other.fieldName;
+        }
 
         bool operator!=(const TDItem &other) const { return !(*this == other); }
 

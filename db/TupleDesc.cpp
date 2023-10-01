@@ -1,6 +1,7 @@
 #include <db/TupleDesc.h>
 #include <functional>
 #include <sstream>
+#include <iostream>
 
 using namespace db;
 
@@ -93,7 +94,15 @@ std::string TupleDesc::to_string() const {
 }
 
 bool TupleDesc::operator==(const TupleDesc &other) const {
-    return items == other.items;
+    std::cout<<"testing"<<std::endl;
+    if (items.size() != other.items.size() || size != other.size) return false;
+    else {
+        for (int i = 0; i < items.size(); i++) {
+            std::cout<<items[i].to_string()<<" "<<other.items[i].to_string()<<std::endl;
+            if (items[i].to_string() != other.items[i].to_string()) return false;
+        }
+    }
+    return true;
 }
 
 TupleDesc::iterator TupleDesc::begin() const {

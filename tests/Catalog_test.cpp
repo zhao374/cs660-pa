@@ -6,18 +6,23 @@
 #include <db/DbFile.h>
 #include <db/SkeletonFile.h>
 
+using  namespace std;
+
 TEST(CatalogTest, GetTupleDesc) {
+    cout<<"0"<<endl;
+
     int id1 = db::Utility::randomInt();
     std::string name1 = db::Utility::generateUUID();
     db::Database::getCatalog().clear();
-    printf("1\n");
+    cout<<"1"<<endl;
     db::SkeletonFile file(id1, db::Utility::getTupleDesc(2));
     db::Database::getCatalog().addTable(&file, name1);
 
-    printf("2\n");
+    cout<<"2"<<endl;
     db::TupleDesc expected = db::Utility::getTupleDesc(2);
     db::TupleDesc actual = db::Database::getCatalog().getTupleDesc(id1);
-    printf("3\n");
+    cout<<"3"<<endl;
+    cout<<expected.to_string()<<":"<<actual.to_string()<<endl;
     EXPECT_EQ(expected, actual);
 }
 
@@ -31,7 +36,7 @@ TEST(CatalogTest, GetTableId) {
     db::SkeletonFile file2(id2, db::Utility::getTupleDesc(2));
     db::Database::getCatalog().addTable(&file1, name1);
     db::Database::getCatalog().addTable(&file2, name2);
-
+    cout<<"3"<<endl;
     EXPECT_EQ(id1, db::Database::getCatalog().getTableId(name1));
     EXPECT_EQ(id2, db::Database::getCatalog().getTableId(name2));
 
