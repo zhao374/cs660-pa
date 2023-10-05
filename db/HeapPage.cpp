@@ -95,7 +95,6 @@ void *HeapPage::getPageData() {
             }
         }
     }
-
     return data;
 }
 

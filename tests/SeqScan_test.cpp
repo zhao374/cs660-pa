@@ -22,7 +22,7 @@ TEST(SeqScanTest, IterateFile) {
     db::TransactionId tid;
 
     db::SeqScan f(&tid, table.getId());
-
+    //std::cout<<f.begin().operator*().to_string()<<std::endl;
     EXPECT_NE(f.begin(), f.end());
     for (const auto& tup: f) {
         std::cout << tup.to_string() << std::endl;

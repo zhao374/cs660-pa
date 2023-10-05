@@ -46,17 +46,23 @@ void create_page(int fd, off_t offset, uint8_t byte) {
 
 void read_page(int fd, uint8_t *data, off_t offset) {
     ssize_t bytes_read = pread(fd, data, 4096, offset);
+    printf("bytes_read: %zd\n", bytes_read);
     if (bytes_read == -1) {
         perror("pread");
         exit(1);
     }
-    printf("bytes_read: %zd\n", bytes_read);
+
 }
 
 void print_page(uint8_t *data) {
-    if (false) {
+    if (true) {
+
         db::HeapFile hf("test.dat", db::Utility::getTupleDesc(2));
+        printf("bbb");
+        auto it=hf.begin().operator*();
+        std::cout<<it.to_string()<<std::endl;
         for (const auto &item: hf) {
+            printf("ccc");
             std::cout << item.getField(0).to_string() << ' ' << item.getField(1).to_string() << std::endl;
         }
         std::cout << std::endl;
@@ -74,7 +80,10 @@ void print_page(uint8_t *data) {
 }
 
 int main() {
+
     int fd = open("test.dat", O_RDWR | O_CREAT, 0644);
+    std::cout << fd<<std::endl;
+
     if (fd == -1) {
         perror("open");
         return 1;
@@ -89,7 +98,7 @@ int main() {
         read_page(fd, data, 4096 * i);
         print_page(data);
     }
-
+    std::cout << fd<<std::endl;
     close(fd);
     return 0;
 }

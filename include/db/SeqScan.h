@@ -9,6 +9,7 @@
 #include <db/TransactionId.h>
 #include <db/TupleDesc.h>
 #include <db/DbFile.h>
+//#include <db/HeapFile.h>
 
 namespace db {
     class SeqScanIterator {
@@ -50,6 +51,8 @@ namespace db {
         TransactionId tid;
         int tableId;
         std::string tableAlias;
+        DbFile* hp;
+        std::vector<Tuple> tups;
         // TODO pa1.6: add private members
     public:
 

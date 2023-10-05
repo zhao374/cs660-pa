@@ -73,6 +73,7 @@ TupleDesc TupleDesc::merge(const TupleDesc &td1, const TupleDesc &td2) {
     std::vector<Types::Type> types;
     std::vector<std::string> names;
     for(auto& item : td1) {
+        std::cout<<item.fieldName<<std::flush;
         types.push_back(item.fieldType);
         names.push_back(item.fieldName);
     }

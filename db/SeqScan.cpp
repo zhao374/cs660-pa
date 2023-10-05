@@ -1,4 +1,5 @@
 #include <db/SeqScan.h>
+#include <db/HeapFile.h>
 
 using namespace db;
 
@@ -7,6 +8,8 @@ SeqScan::SeqScan(TransactionId *tid, int tableid, const std::string &tableAlias)
     this->tid = *tid;
     this->tableId = tableid;
     this->tableAlias = tableAlias;
+    this->hp=(Database::getCatalog().getDatabaseFile(tableid));
+
 }
 
 std::string SeqScan::getTableName() const {
@@ -31,12 +34,11 @@ const TupleDesc &SeqScan::getTupleDesc() const {
 
 SeqScan::iterator SeqScan::begin() const {
 
-    std::vector<Tuple> myTuples;
-    return SeqScanIterator{0, myTuples.size(), myTuples};
+    return SeqScanIterator{0, tups.size(), tups};
 }
 
 SeqScan::iterator SeqScan::end() const {
-    std::vector<Tuple> myTuples;
-    return SeqScanIterator{0, myTuples.size(), myTuples};
+
+    return SeqScanIterator{tups.size(), tups.size(), tups};
     // TODO pa1.6: implement
 }

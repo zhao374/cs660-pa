@@ -42,8 +42,11 @@ namespace db {
          */
         virtual const TupleDesc &getTupleDesc() const = 0;
 
+
         virtual ~DbFile() = default;
     };
+
+
 }
 
 #endif
