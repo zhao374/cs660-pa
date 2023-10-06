@@ -36,11 +36,11 @@ HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
     this->fname = fname;
 
     db::Database::getCatalog().addTable(this, fname);
-    // Get the current working directory
-    std::filesystem::path currentPath = std::filesystem::current_path();
-
-    // Convert the path to a string and print it
-    std::cout << "Current Working Directory: " << currentPath.string() << std::endl;
+//    // Get the current working directory
+//    std::filesystem::path currentPath = std::filesystem::current_path();
+//
+//    // Convert the path to a string and print it
+//    std::cout << "Current Working Directory: " << currentPath.string() << std::endl;
 
 
     // Open the .dat file in binary mode
