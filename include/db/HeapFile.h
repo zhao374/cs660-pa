@@ -50,10 +50,9 @@ namespace db {
      */
     class HeapFile : public DbFile {
         TupleDesc td;
-        std::string fname;
+        const char *fname;
         int tableId;
-        std::vector<HeapPage> pages;
-        std::vector<Tuple> myTuples;
+
         //std::vector<std::array<uint8_t, PAGE_SIZE>> pages;
         // TODO pa1.5: add private members
     public:

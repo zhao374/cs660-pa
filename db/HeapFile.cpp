@@ -30,37 +30,11 @@ unsigned int hashFunction(const char* str) {
 
 
 // TODO pa1.5: implement
-HeapFile::HeapFile(const char *fname, const TupleDesc &td) {
+HeapFile::HeapFile(const char *fname, const TupleDesc &td) : fname(fname) {
     this->tableId = hashFunction(fname);
     this->td = td;
     Database::getCatalog().addTable(this,fname);
-    const size_t PAGE_SIZE = 4096;
-    int fd = open(fname, O_RDONLY);
-//    printf(reinterpret_cast<const char *>(fd));
-    off_t offset = 0; // Offset from the beginning of the file
-    int pagen=0;
-    while (true) {
-        uint8_t data[4096];
-        ssize_t bytesRead = pread(fd, data, PAGE_SIZE, offset);
-        if (bytesRead <= 0) {
-            break;
-        }
-        pagen+=1;
-        pages.push_back(HeapPage(HeapPageId(tableId,pagen),data));
-        offset += bytesRead;
-    }
-    close(fd);
-    std::cout << "Read " << pages.size() << " pages from the file." << std::endl;
-
     this->fname = fname;
-    for(auto &page:pages){
-        for(auto &tuple: page){
-            myTuples.push_back(tuple);
-        }
-    }
-    std::cout << myTuples.size() << std::endl;
-
-
 }
 
 int HeapFile::getId() const {
@@ -74,19 +48,23 @@ const TupleDesc &HeapFile::getTupleDesc() const {
 }
 
 Page *HeapFile::readPage(const PageId &pid) {
-    for(auto & page: pages){
-        if(page.getId()==pid){
-            return &page;
-        }
-    }
-    return nullptr;
+    int page_size=Database::getBufferPool().getPageSize();
+    int offset=pid.pageNumber()*page_size;
+    int fd = open(this->fname, O_RDONLY);
+    uint8_t data[4096];
+    ssize_t bytesRead = pread(fd, data,page_size, offset);
+    HeapPageId hpid(pid.getTableId(),pid.pageNumber());
+    HeapPage* heapPage = new HeapPage(hpid, data);
+    return static_cast<Page*>(heapPage);
+
     // TODO pa1.5: implement
 }
 
 
 
 int HeapFile::getNumPages() {
-    return pages.size();
+    int fd = open(this->fname, O_RDONLY);
+    return std::ceil(lseek(fd, 0, SEEK_END)/Database::getBufferPool().getPageSize());;
     // TODO pa1.5: implement
 }
 
