@@ -17,9 +17,6 @@ namespace db {
     public:
         TupleIterator(size_t i, size_t s, const std::vector<const Field*> &fields)
                 : index(i), size(s),  fields(fields) {
-            while (index < size) {
-                index++;
-            }
         }
 
         bool operator!=(const TupleIterator &other) const {
@@ -27,14 +24,12 @@ namespace db {
         }
 
         TupleIterator &operator++() {
-            do {
-                index++;
-            } while (index < size);
+            ++index;
             return *this;
         }
 
-        const Field &operator*() const {
-            return *fields[index];
+        const Field* operator*() const {
+            return fields[index];
         }
     };
 
