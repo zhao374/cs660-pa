@@ -51,7 +51,7 @@ namespace db {
         TupleDesc td;
         std::string fname;
         int tableId;
-        std::vector<Page> pages;
+        std::vector<HeapPage> pages;
 
         // TODO pa1.5: add private members
     public:

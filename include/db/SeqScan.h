@@ -9,44 +9,16 @@
 #include <db/TransactionId.h>
 #include <db/TupleDesc.h>
 #include <db/DbFile.h>
+#include "db/HeapPage.h"
 
 namespace db {
-    class SeqScanIterator {
-        size_t index;
-        size_t size;
-        const std::vector<Tuple> &fields;
-        // TODO pa1.6: add private members
-    public:
-        SeqScanIterator(size_t i, size_t s, const std::vector<Tuple> &fields)
-                : index(i), size(s), fields(fields) {
-            while (index < size) {
-                index++;
-            }
-        }
-
-        bool operator!=(const SeqScanIterator &other) const {
-            return index != other.index;
-        }
-
-        SeqScanIterator &operator++() {
-            do {
-                index++;
-            } while (index < size);
-            return *this;
-        }
-
-        const Tuple &operator*() const {
-            return fields[index];
-        }
-    };
-
     /**
      * SeqScan is an implementation of a sequential scan access method that reads
      * each tuple of a table in no particular order (e.g., as they are laid out on
      * disk).
      */
     class SeqScan {
-        using iterator = SeqScanIterator;
+        using iterator = HeapPageIterator;
         TransactionId tid;
         int tableId;
         std::string tableAlias;

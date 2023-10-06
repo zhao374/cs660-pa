@@ -1,4 +1,5 @@
 #include <db/SeqScan.h>
+#include "db/HeapFile.h"
 
 using namespace db;
 
@@ -30,13 +31,15 @@ const TupleDesc &SeqScan::getTupleDesc() const {
 }
 
 SeqScan::iterator SeqScan::begin() const {
-
-    std::vector<Tuple> myTuples;
-    return SeqScanIterator{0, myTuples.size(), myTuples};
+    db::HeapPage *myPage = dynamic_cast<HeapPage *>(db::Database::getCatalog().getDatabaseFile(tableId)->readPage(
+            HeapPageId(tableId, 0)));
+    return myPage->begin();
 }
 
 SeqScan::iterator SeqScan::end() const {
-    std::vector<Tuple> myTuples;
-    return SeqScanIterator{0, myTuples.size(), myTuples};
+    db::HeapPage *myPage = dynamic_cast<HeapPage *>(db::Database::getCatalog().getDatabaseFile(tableId)->readPage(
+            HeapPageId(tableId, 0)));
+    // std::vector<Tuple> myTuples;
+    return myPage->end();
     // TODO pa1.6: implement
 }

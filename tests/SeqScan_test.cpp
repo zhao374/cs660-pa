@@ -15,7 +15,7 @@ TEST(SeqScanTest, IterateFile) {
 
     db::TupleDesc descriptor(types, names);
 
-    db::HeapFile table("test.dat", descriptor);
+    db::HeapFile table("heapfile.dat", descriptor);
 
     db::Database::getCatalog().addTable(&table, "test");
 
