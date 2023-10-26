@@ -10,6 +10,9 @@ namespace db {
  * @see simpledb.IndexDbIterator
  */
     class IndexPredicate {
+        Op op; // The comparison operation
+        const Field *fvalue; // The value to be compared with
+
         // TODO pa2.2: add private members
 
         /**

@@ -1,12 +1,26 @@
 #include <db/BTreeFile.h>
+#include "db/Database.h"
 
 using namespace db;
 
 BTreeLeafPage *BTreeFile::findLeafPage(TransactionId tid, PagesMap &dirtypages, BTreePageId *pid, Permissions perm,
                                        const Field *f) {
-    // TODO pa2.2: implement
-    return nullptr;
+    // Fetch the page from buffer pool
+    BTreePage *page = dynamic_cast<BTreePage *>(db::Database::getBufferPool().getPage(pid));
+    if (pid->getType() == BTreePageType::LEAF) {
+        return dynamic_cast<BTreeLeafPage *>(page);
+    }
+    BTreeInternalPage *inPage = dynamic_cast<BTreeInternalPage *>(db::Database::getBufferPool().getPage(pid));
+    BTreeEntry *bEntry;
+    for (BTreeEntry entry: *inPage) { // assuming BTreeInternalPage has begin and end iterators
+        bEntry = &entry;
+        if (!f || f->compare(Op::LESS_THAN_OR_EQ, entry.getKey())) {
+            return this->findLeafPage(tid, dirtypages, entry.getLeftChild(), Permissions::READ_ONLY, f);
+        }
+    }
+    return this->findLeafPage(tid, dirtypages, bEntry->getRightChild(), Permissions::READ_ONLY, f);
 }
+
 
 BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages, BTreeLeafPage *page, const Field *field) {
     // TODO pa2.3: implement
