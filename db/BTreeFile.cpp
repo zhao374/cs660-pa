@@ -6,11 +6,11 @@ using namespace db;
 BTreeLeafPage *BTreeFile::findLeafPage(TransactionId tid, PagesMap &dirtypages, BTreePageId *pid, Permissions perm,
                                        const Field *f) {
     // Fetch the page from buffer pool
-    BTreePage *page = dynamic_cast<BTreePage *>(db::Database::getBufferPool().getPage(pid));
+    BTreePage *page = dynamic_cast<BTreePage *>(this->getPage(tid,dirtypages,pid,perm));
     if (pid->getType() == BTreePageType::LEAF) {
         return dynamic_cast<BTreeLeafPage *>(page);
     }
-    BTreeInternalPage *inPage = dynamic_cast<BTreeInternalPage *>(db::Database::getBufferPool().getPage(pid));
+    BTreeInternalPage *inPage = dynamic_cast<BTreeInternalPage *>(this->getPage(tid,dirtypages,pid,perm));
     BTreeEntry *bEntry;
     for (BTreeEntry entry: *inPage) { // assuming BTreeInternalPage has begin and end iterators
         bEntry = &entry;
