@@ -47,9 +47,12 @@ void BufferPool::flushPages(const TransactionId &tid) {
 }
 
 void BufferPool::insertTuple(const TransactionId &tid, int tableId, Tuple *t) {
-    // TODO pa2.3: implement
+    DbFile * myFile = Database::getCatalog().getDatabaseFile(tableId);
+    myFile->insertTuple(tid, *t);
 }
 
 void BufferPool::deleteTuple(const TransactionId &tid, Tuple *t) {
+    DbFile * myFile = Database::getCatalog().getDatabaseFile(tid.operator int());
+    myFile->deleteTuple(tid, *t);
     // TODO pa2.3: implement
 }

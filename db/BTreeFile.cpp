@@ -29,6 +29,7 @@ BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages,
     if (pNum % 2 == 1) splitIdx += 1;
     auto it =page->rbegin();
     Tuple* curTuple = nullptr;
+    // keep half records to the left and half records to the right
     for (int count = 0; count < splitIdx && it != page->rend(); ++count, ++it) {
         *curTuple = *it;
         page->deleteTuple(curTuple);
@@ -36,6 +37,7 @@ BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages,
     }
     const Field& field1 = (curTuple->getField(this->keyField));
     Field* upKey = const_cast<Field*>(&field1);
+    // find parent
     BTreeInternalPage* parPage = dynamic_cast<BTreeInternalPage*>(
             this->getParentWithEmptySlots(tid, dirtypages, page->getParentId(), upKey)
     );
@@ -60,11 +62,60 @@ BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages,
     return rPage;
 }
 
+/**
+ * Split an internal page to make room for new entries and split its parent page as needed to accommodate
+ * a new entry. The new entry for the parent should have a key matching
+ * the middle key in the original internal page being split (this key is "pushed up" to the parent).
+ * The child pointers of the new parent entry should point to the two internal pages resulting
+ * from the split. Update parent pointers as needed.
+ *
+ * Return the internal page into which an entry with key field "field" should be inserted
+ *
+ * @param tid - the transaction id
+ * @param dirtypages - the list of dirty pages which should be updated with all new dirty pages
+ * @param page - the internal page to split
+ * @param field - the key field of the entry to be inserted after the split is complete. Necessary to know
+ * which of the two pages to return.
+ * @see getParentWithEmptySlots
+ * @see updateParentPointers
+ *
+ * @return the internal page into which the new entry should be inserted
+ */
+
 BTreeInternalPage *BTreeFile::splitInternalPage(TransactionId tid, PagesMap &dirtypages, BTreeInternalPage *page,
                                                 Field *field) {
+    BTreeInternalPage* rPage = dynamic_cast<BTreeInternalPage*>(this->getEmptyPage(tid, dirtypages, BTreePageType::INTERNAL));
 
-    // TODO pa2.3: implement
-    return nullptr;
+    // feed the right page
+    int pNum = page->getNumEntries();
+    int middleNum = pNum / 2;
+    if (pNum % 2 == 1) middleNum++;
+    auto it = page->rbegin();
+    BTreeEntry * curEntry = nullptr;
+    for (int count = 1; count < middleNum && it != page->rend(); count++, ++it) {
+        *curEntry = *it;
+        page->deleteKeyAndRightChild(curEntry);
+        rPage->insertEntry(*curEntry);
+    }
+    // delete middle key from the left page,
+    auto middleEntry =  *(++it);
+    page->deleteKeyAndRightChild(&middleEntry);
+
+    // find parent
+    BTreeInternalPage* parPage = dynamic_cast<BTreeInternalPage*>(
+            this->getParentWithEmptySlots(tid, dirtypages, page->getParentId(), middleEntry.getKey())
+    );
+
+    BTreePageId pageId=page->getId();
+    BTreePageId rpageId=rPage->getId();
+    parPage->insertEntry(*new BTreeEntry(middleEntry.getKey(),&pageId,&rpageId));
+    rPage->setParentId(&parPage->getId());
+
+    this->updateParentPointers(tid, dirtypages, page);
+    this->updateParentPointers(tid, dirtypages, rPage);
+
+    if (field->compare(Op::LESS_THAN_OR_EQ, middleEntry.getKey())) return page;
+    return rPage;
 }
 
 void BTreeFile::stealFromLeafPage(BTreeLeafPage *page, BTreeLeafPage *sibling, BTreeInternalPage *parent,
