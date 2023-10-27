@@ -23,12 +23,46 @@ BTreeLeafPage *BTreeFile::findLeafPage(TransactionId tid, PagesMap &dirtypages, 
 
 
 BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages, BTreeLeafPage *page, const Field *field) {
-    // TODO pa2.3: implement
-    return nullptr;
+    BTreeLeafPage* rPage = dynamic_cast<BTreeLeafPage*>(this->getEmptyPage(tid, dirtypages, BTreePageType::LEAF));
+    int pNum = page->getNumTuples();
+    int splitIdx = pNum / 2;
+    if (pNum % 2 == 1) splitIdx += 1;
+    auto it =page->rbegin();
+    Tuple* curTuple = nullptr;
+    for (int count = 0; count < splitIdx && it != page->rend(); ++count, ++it) {
+        *curTuple = *it;
+        page->deleteTuple(curTuple);
+        rPage->insertTuple(curTuple);
+    }
+    const Field& field1 = (curTuple->getField(this->keyField));
+    Field* upKey = const_cast<Field*>(&field1);
+    BTreeInternalPage* parPage = dynamic_cast<BTreeInternalPage*>(
+            this->getParentWithEmptySlots(tid, dirtypages, page->getParentId(), upKey)
+    );
+    BTreePageId pageId=page->getId();
+    BTreePageId rpageId=rPage->getId();
+    parPage->insertEntry(*new BTreeEntry(upKey,&pageId,&rpageId));
+    rPage->setParentId(&parPage->getId());
+    if (page->getRightSiblingId() != nullptr) {
+        BTreeLeafPage* rSibling = dynamic_cast<BTreeLeafPage*>(
+                this->getPage(tid, dirtypages, page->getRightSiblingId(), Permissions::READ_WRITE)
+        );
+        BTreePageId rid=rPage->getId();
+        rSibling->setLeftSiblingId(&rid);
+        BTreePageId srid=rSibling->getId();
+        rPage->setRightSiblingId(&srid);
+    }
+    BTreePageId rid1=rPage->getId();
+    page->setRightSiblingId(&rid1);
+    BTreePageId lid=page->getId();
+    rPage->setLeftSiblingId(&lid);
+    if (field->compare(Op::LESS_THAN_OR_EQ, upKey)) return page;
+    return rPage;
 }
 
 BTreeInternalPage *BTreeFile::splitInternalPage(TransactionId tid, PagesMap &dirtypages, BTreeInternalPage *page,
                                                 Field *field) {
+
     // TODO pa2.3: implement
     return nullptr;
 }
