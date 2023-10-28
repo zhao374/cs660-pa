@@ -120,27 +120,122 @@ BTreeInternalPage *BTreeFile::splitInternalPage(TransactionId tid, PagesMap &dir
 
 void BTreeFile::stealFromLeafPage(BTreeLeafPage *page, BTreeLeafPage *sibling, BTreeInternalPage *parent,
                                   BTreeEntry *entry, bool isRightSibling) {
-    // TODO pa2.4: implement (BONUS)
+    auto it = sibling->rbegin();
+    if (isRightSibling) {
+        it = sibling->begin();
+    }
+
+    int numToMove = (sibling->getNumTuples() - page->getNumTuples()) / 2;
+    Tuple tup;
+    for (int i = 0; i < numToMove; ++i) {
+
+        tup = (++it).operator*();
+        sibling->deleteTuple(&tup);
+        page->insertTuple(&tup);
+    }
+    if (isRightSibling) {
+        tup = (++it).operator*();
+    }
+    if (isRightSibling) {
+        auto myField = sibling->begin().operator*();
+        auto field = const_cast<db::Field*>(&myField.getField(keyField));
+        entry->setKey(field);
+    } else {
+        auto myField = page->begin().operator*();
+        auto field = const_cast<db::Field*>(&myField.getField(keyField));
+        entry->setKey(field);
+    }
+    parent->updateEntry(entry);
+    // pa2.4: implement (BONUS)
 }
 
 void BTreeFile::stealFromLeftInternalPage(TransactionId tid, PagesMap &dirtypages, BTreeInternalPage *page,
                                           BTreeInternalPage *leftSibling, BTreeInternalPage *parent,
                                           BTreeEntry *parentEntry) {
+    int numToMove = (leftSibling->getNumEntries() - page->getNumEntries()) / 2;
+
+    auto it = leftSibling->rbegin();
+    auto pageIt = page->begin();
+    BTreeEntry hub(parentEntry->getKey(), nullptr, (*(++pageIt)).getLeftChild());
+
+    for (int i = 0; i < numToMove; ++i) {
+        BTreeEntry left = *(++it);
+        hub.setLeftChild(left.getRightChild());
+        page->insertEntry(hub);
+        hub = BTreeEntry(left.getKey(), nullptr, left.getRightChild());
+        leftSibling->deleteKeyAndRightChild(&left);
+    }
+    parentEntry->setKey(hub.getKey());
+    parent->updateEntry(parentEntry);
+    updateParentPointers(tid, dirtypages, page);
+    updateParentPointers(tid, dirtypages, leftSibling);
+
     // TODO pa2.4: implement (BONUS)
 }
 
 void BTreeFile::stealFromRightInternalPage(TransactionId tid, PagesMap &dirtypages, BTreeInternalPage *page,
                                            BTreeInternalPage *rightSibling, BTreeInternalPage *parent,
                                            BTreeEntry *parentEntry) {
-    // TODO pa2.4: implement (BONUS)
+    int numToMove = (rightSibling->getNumEntries() - page->getNumEntries()) / 2;
+
+    auto it = rightSibling->begin();
+    auto pageIt = page->rbegin();
+    BTreeEntry hub(parentEntry->getKey(), (*(++pageIt)).getRightChild(), nullptr);
+
+    for (int i = 0; i < numToMove; ++i) {
+        BTreeEntry right = *(++it);
+        hub.setRightChild(right.getLeftChild());
+        page->insertEntry(hub);
+        hub = BTreeEntry(right.getKey(), right.getLeftChild(), nullptr);
+        rightSibling->deleteKeyAndLeftChild(&right);
+    }
+
+    parentEntry->setKey(hub.getKey());
+    parent->updateEntry(parentEntry);
+    updateParentPointers(tid, dirtypages, page);
+    updateParentPointers(tid, dirtypages, rightSibling);
+
 }
 
 void BTreeFile::mergeLeafPages(TransactionId tid, PagesMap &dirtypages, BTreeLeafPage *leftPage,
                                BTreeLeafPage *rightPage, BTreeInternalPage *parent, BTreeEntry *parentEntry) {
-    // TODO pa2.4: implement (BONUS)
+    auto it = rightPage->begin();
+
+    while (it != rightPage->end()) {
+        Tuple tup = *(++it);
+        rightPage->deleteTuple(&tup);
+        leftPage->insertTuple(&tup);
+    }
+
+    if (rightPage->getRightSiblingId() != nullptr) {
+        auto * page = dynamic_cast<BTreeLeafPage*>(this->getPage(tid, dirtypages, rightPage->getRightSiblingId(), Permissions::READ_WRITE));
+
+        page->setLeftSiblingId((BTreePageId *) &leftPage->getId());
+    }
+
+    leftPage->setRightSiblingId(rightPage->getRightSiblingId());
+    this->setEmptyPage(tid, dirtypages, rightPage->getId().pageNumber());
+    this->deleteParentEntry(tid, dirtypages, leftPage, parent, parentEntry);
+
 }
 
 void BTreeFile::mergeInternalPages(TransactionId tid, PagesMap &dirtypages, BTreeInternalPage *leftPage,
                                    BTreeInternalPage *rightPage, BTreeInternalPage *parent, BTreeEntry *parentEntry) {
-    // TODO pa2.4: implement (BONUS)
+    auto leftIt = leftPage->rbegin();
+    auto rightIt = rightPage->begin();
+
+    BTreeEntry entryInParent(parentEntry->getKey(), (*(++leftIt)).getRightChild(), (*(++rightIt)).getLeftChild());
+    leftPage->insertEntry(entryInParent);
+
+    rightIt = rightPage->begin();
+    while (rightIt != rightPage->end()) {
+        BTreeEntry entry = *(++rightIt);
+        rightPage->deleteKeyAndLeftChild(&entry);
+        leftPage->insertEntry(entry);
+    }
+
+    setEmptyPage(tid, dirtypages, rightPage->getId().pageNumber());
+    updateParentPointers(tid, dirtypages, leftPage);
+    deleteParentEntry(tid, dirtypages, leftPage, parent, parentEntry);
+
 }
