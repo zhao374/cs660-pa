@@ -1,5 +1,6 @@
 #include <db/BTreeFile.h>
 #include "db/Database.h"
+#include <fcntl.h>
 
 using namespace db;
 
@@ -238,4 +239,12 @@ void BTreeFile::mergeInternalPages(TransactionId tid, PagesMap &dirtypages, BTre
     updateParentPointers(tid, dirtypages, leftPage);
     deleteParentEntry(tid, dirtypages, leftPage, parent, parentEntry);
 
+}
+
+BTreeFile::BTreeFile(const char *fname, int key, const TupleDesc &td) : keyField(key), td(td) {
+    fd = open(fname, O_RDWR | O_CREAT | O_APPEND | O_TRUNC, 0644);
+    if (fd == -1) {
+        throw std::runtime_error("open");
+    }
+    tableid = std::hash<std::string>{}(fname);
 }
