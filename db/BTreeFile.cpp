@@ -7,12 +7,13 @@ using namespace db;
 BTreeLeafPage *BTreeFile::findLeafPage(TransactionId tid, PagesMap &dirtypages, BTreePageId *pid, Permissions perm,
                                        const Field *f) {
     // Fetch the page from buffer pool
-    BTreePage *page = dynamic_cast<BTreePage *>(this->getPage(tid,dirtypages,pid,perm));
+
     if (pid->getType() == BTreePageType::LEAF) {
+        BTreePage *page = dynamic_cast<BTreePage *>(this->getPage(tid,dirtypages,pid,perm));
         return dynamic_cast<BTreeLeafPage *>(page);
     }
     BTreeInternalPage *inPage = dynamic_cast<BTreeInternalPage *>(this->getPage(tid,dirtypages,pid,perm));
-    BTreeEntry *bEntry;
+    BTreeEntry *bEntry= nullptr;
     for (BTreeEntry entry: *inPage) { // assuming BTreeInternalPage has begin and end iterators
         bEntry = &entry;
         if (!f || f->compare(Op::LESS_THAN_OR_EQ, entry.getKey())) {
@@ -29,10 +30,11 @@ BTreeLeafPage *BTreeFile::splitLeafPage(TransactionId tid, PagesMap &dirtypages,
     int splitIdx = pNum / 2;
     if (pNum % 2 == 1) splitIdx += 1;
     auto it =page->rbegin();
-    Tuple* curTuple = nullptr;
+    Tuple *curTuple = nullptr;
     // keep half records to the left and half records to the right
-    for (int count = 0; count < splitIdx && it != page->rend(); ++count, ++it) {
-        *curTuple = *it;
+    //int count = 1; count < middleNum && it != page->rend(); count++, ++it
+    for (int count = 1; count < splitIdx && it != page->rend(); count++, ++it) {
+        curTuple = &(*it);
         page->deleteTuple(curTuple);
         rPage->insertTuple(curTuple);
     }
