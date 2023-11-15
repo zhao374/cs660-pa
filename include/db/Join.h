@@ -9,6 +9,20 @@ namespace db {
      * The Join operator implements the relational join operation.
      */
     class Join : public Operator {
+        enum Status {
+            NOT_STARTED, READING,END
+        };
+        JoinPredicate* joinPred;
+        DbIterator* child1;
+        DbIterator* child2;
+        TupleDesc mergedTD;
+        int outerTupleSize;
+        int innerTupleSize;
+        Tuple outerTuple;
+        Status c1status=NOT_STARTED;
+        Status c2status=NOT_STARTED;
+
+
         // TODO pa3.1: add private members
     protected:
         /**
