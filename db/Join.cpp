@@ -55,11 +55,13 @@ void Join::rewind() {
 }
 
 std::vector<DbIterator *> Join::getChildren() {
-    return{};
+    return {child1, child2};
     // TODO pa3.1: some code goes here
 }
 
 void Join::setChildren(std::vector<DbIterator *> children) {
+    child1 = children[0];
+    child2 = children[1];
     // TODO pa3.1: some code goes here
 }
 
@@ -67,7 +69,7 @@ std::optional<Tuple> Join::fetchNext() {
     Tuple innerTuple;
     while(true){
         switch(this->c1status){
-            case NOT_STARTED:
+            case PREPARING:
                 if(this->child1->hasNext()){
                     this->outerTuple=this->child1->next();
                     this->c1status=READING;
@@ -80,7 +82,7 @@ std::optional<Tuple> Join::fetchNext() {
                     if(this->child1->hasNext()){
                         this->outerTuple=this->child1->next();
                         this->child2->rewind();
-                        this->c2status=NOT_STARTED;
+                        this->c2status=PREPARING;
                     }else{
                         this->c1status=END;
                         return {};
@@ -93,7 +95,7 @@ std::optional<Tuple> Join::fetchNext() {
 
         }
         switch(this->c2status){
-            case NOT_STARTED:
+            case PREPARING:
                 if(this->child2->hasNext()){
                     innerTuple=this->child2->next();
                     this->c2status=READING;

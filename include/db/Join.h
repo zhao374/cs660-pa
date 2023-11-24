@@ -10,7 +10,7 @@ namespace db {
      */
     class Join : public Operator {
         enum Status {
-            NOT_STARTED, READING,END
+            PREPARING, READING,END
         };
         JoinPredicate* joinPred;
         DbIterator* child1;
@@ -19,8 +19,8 @@ namespace db {
         int outerTupleSize;
         int innerTupleSize;
         Tuple outerTuple;
-        Status c1status=NOT_STARTED;
-        Status c2status=NOT_STARTED;
+        Status c1status=PREPARING;
+        Status c2status=PREPARING;
 
 
         // TODO pa3.1: add private members

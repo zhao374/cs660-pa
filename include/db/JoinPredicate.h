@@ -10,6 +10,10 @@ namespace db {
  * is most likely used by the Join operator.
  */
     class JoinPredicate {
+    private:
+        int index1, index2;
+        Predicate::Op op;
+
         // TODO pa3.1: add private members
     public:
         /**
