@@ -15,7 +15,13 @@ namespace db {
      * single column.
      */
     class Aggregate : public Operator {
-        // TODO pa3.2: add private members
+    private:
+        DbIterator* child;
+        int aField, gField;
+        Types::Type aFieldType, gFieldType;
+        Aggregator::Op op;
+        TupleDesc mergedTp;
+        DbIterator* aggrIter = nullptr;
     protected:
         /**
          * Returns the next tuple. If there is a group by field, then the first

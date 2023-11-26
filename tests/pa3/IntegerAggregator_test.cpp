@@ -14,17 +14,23 @@ TEST(IntegerAggregatorTest, test) {
     db::SeqScan ss1(table.getId(), "s1");
     db::IntegerAggregator agg(db::Aggregator::NO_GROUPING, std::nullopt, 1, db::Aggregator::Op::SUM);
 
+    printf("ha\n");
+
     ss1.open();
     while (ss1.hasNext()) {
         auto tup = ss1.next();
-        std::cout << tup.to_string() << std::endl;
+         std::cout << tup.to_string() << std::endl;
         agg.mergeTupleIntoGroup(&tup);
     }
+    printf("haha\n");
+
     ss1.close();
     auto agg_it = agg.iterator();
+    printf("hahaha\n");
 
     int i = 0;
     agg_it->open();
+    printf("hahahaha\n");
     while (agg_it->hasNext()) {
         auto tup = agg_it->next();
         ++i;
@@ -32,6 +38,7 @@ TEST(IntegerAggregatorTest, test) {
         int count = ((db::IntField &) tup.getField(0)).getValue();
         EXPECT_EQ(count, 12075);
     }
+    printf("hahahahaha\n");
     agg_it->close();
 
     EXPECT_EQ(i, 1);

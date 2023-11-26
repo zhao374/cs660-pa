@@ -3,6 +3,7 @@
 
 #include <db/Aggregator.h>
 #include <optional>
+#include "IntAggregateData.h"
 
 namespace db {
 
@@ -10,7 +11,15 @@ namespace db {
  * Knows how to compute some aggregate over a set of IntFields.
  */
     class IntegerAggregator : public Aggregator {
-        // TODO pa3.2: add private members
+    private:
+        int gbfield, afield;
+        std::optional<Types::Type> gbfieldType;
+        Op what;
+        std::unordered_map<int, IntAggregateData> intMap;
+//        bool invalid;
+//
+//        IntegerAggregIterator outputIter;
+
     public:
         /**
          * Aggregate constructor
