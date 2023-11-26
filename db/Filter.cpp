@@ -2,14 +2,13 @@
 
 using namespace db;
 
-Filter::Filter(Predicate p, DbIterator *child) {
-    this->p=&p;
+Filter::Filter(Predicate p, DbIterator *child):p(p) {
     this->child=child;
     // TODO pa3.1: some code goes here
 }
 
 Predicate *Filter::getPredicate() {
-    return this->p;
+    return &p;
     // TODO pa3.1: some code goes here
 }
 
@@ -48,7 +47,7 @@ std::optional<Tuple> Filter::fetchNext() {
     Tuple t;
     while(this->child->hasNext()){
         t=this->child->next();
-        if(this->p->filter(t)){
+        if(this->p.filter(t)){
             return t;
         }
     }

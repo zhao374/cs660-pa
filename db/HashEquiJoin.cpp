@@ -1,7 +1,7 @@
 #include <db/HashEquiJoin.h>
 #include "db/IntField.h"
 #include "db/StringField.h"
-
+#include <unordered_map>
 using namespace db;
 
 HashEquiJoin::HashEquiJoin(JoinPredicate p, DbIterator *child1, DbIterator *child2):joinPred(p) {

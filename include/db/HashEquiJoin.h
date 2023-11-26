@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <unordered_map>
 #include <db/Tuple.h>
 #include <db/Operator.h>
 #include <db/JoinPredicate.h>

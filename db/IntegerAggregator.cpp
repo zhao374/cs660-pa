@@ -1,6 +1,6 @@
 #include <db/IntegerAggregator.h>
 #include <db/IntField.h>
-
+#include <unordered_map>
 using namespace db;
 
 class IntegerAggregatorIterator : public DbIterator {

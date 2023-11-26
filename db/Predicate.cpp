@@ -1,5 +1,7 @@
 #include <db/Predicate.h>
 #include <db/Tuple.h>
+#include <iostream>
+#include "db/IntField.h"
 
 using namespace db;
 
@@ -18,7 +20,8 @@ const Field *Predicate::getOperand() const {
 }
 
 bool Predicate::filter(const Tuple &t) const {
-    return t.getField(field).compare(op, operand);
+    std::cout<<this->field<<std::endl;
+    return t.getField(this->field).compare(op, operand);
 }
 
 std::string Predicate::to_string() const {

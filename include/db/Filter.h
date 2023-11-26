@@ -10,7 +10,7 @@ namespace db {
  */
     class Filter : public Operator {
         // TODO pa3.1: add private members
-        Predicate* p;
+        Predicate p;
         DbIterator* child;
         std::vector<DbIterator *> children;
     protected:
