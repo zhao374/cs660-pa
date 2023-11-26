@@ -13,6 +13,10 @@ namespace db {
      * them from the table they belong to.
      */
     class Delete : public Operator {
+        TransactionId t;
+        DbIterator *child;
+        TupleDesc cntTD;
+        bool used = false;
         // TODO pa3.3: add private members
     protected:
         /**
