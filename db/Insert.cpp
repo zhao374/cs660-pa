@@ -5,33 +5,58 @@
 using namespace db;
 
 std::optional<Tuple> Insert::fetchNext() {
-    // TODO pa3.3: some code goes here
+    int count = 0;
+    while (this->child->hasNext()) {
+            Tuple tt=this->child->next();
+            db::Database::getBufferPool().insertTuple(this->tid, this->tableId, &tt);
+            ++count;
+    }
+    if (!this->used) {
+        Tuple tp = Tuple(this->cntTD);
+        tp.setField(0, new IntField(count));
+        this->used = true;
+        return tp;
+    } else {
+        return {};
+    }
 }
 
 Insert::Insert(TransactionId t, DbIterator *child, int tableId) {
-    // TODO pa3.3: some code goes here
+    this->tid = t;
+    this->child = child;
+    this->tableId = tableId;
+
+    std::vector<Types::Type> typeT={Types::INT_TYPE};
+    std::vector<std::string> fieldF={"INSERT_CNT"};
+    this->cntTD = *(new TupleDesc(typeT, fieldF));
+
 }
 
 const TupleDesc &Insert::getTupleDesc() const {
-    // TODO pa3.3: some code goes here
+    return this->cntTD;
 }
 
 void Insert::open() {
-    // TODO pa3.3: some code goes here
+    this->child->open();
+    this->used = false;
+    Operator::open();
 }
 
 void Insert::close() {
-    // TODO pa3.3: some code goes here
+    this->child->close();
+    Operator::close();
 }
 
 void Insert::rewind() {
+    this->child->rewind();
+    this->used = false;
     // TODO pa3.3: some code goes here
 }
 
 std::vector<DbIterator *> Insert::getChildren() {
-    // TODO pa3.3: some code goes here
+    return {this->child};
 }
 
 void Insert::setChildren(std::vector<DbIterator *> children) {
-    // TODO pa3.3: some code goes here
+    this->child=children[0];
 }

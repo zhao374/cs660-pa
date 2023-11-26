@@ -10,6 +10,13 @@ namespace db {
  * constructor
  */
     class Insert : public Operator {
+    private:
+    TransactionId tid;
+    DbIterator * child;
+    int tableId;
+    bool used = true;
+
+    TupleDesc cntTD;
         // TODO pa3.3: add private members
     protected:
         /**
