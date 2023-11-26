@@ -14,8 +14,9 @@ private:
     Aggregator::Op what;
 public:
     IntegerAggregatorIterator(int gbfield,
-                              const std::unordered_map<int, IntAggregateData> &data)
-                              :aggMap(data), gbfield(gbfield){
+                              const std::unordered_map<int, IntAggregateData> &data,
+                              Aggregator::Op what)
+                              :aggMap(data), gbfield(gbfield), what(what){
         this->resultTD = *new TupleDesc({Types::INT_TYPE});
 
     }
@@ -94,34 +95,36 @@ IntegerAggregator::IntegerAggregator(int gbfield, std::optional<Types::Type> gbf
 }
 
 void IntegerAggregator::mergeTupleIntoGroup(Tuple *tup) {
-    IntAggregateData aggData;
+
     IntField aggField = (IntField &&) tup->getField(this->afield);
     if (this->gbfield == NO_GROUPING) {
         this->intMap[0].data.push_back(aggField.getValue());
-        aggData = this->intMap[0];
+        this->intMap[0].setMin(std::min(this->intMap[0].getMin(), aggField.getValue()));
+        this->intMap[0].setMax(std::max(this->intMap[0].getMax(), aggField.getValue()));
+        this->intMap[0].setSum(this->intMap[0].getSum() + aggField.getValue());
+        this->intMap[0].increaseCount();
     } else {
         IntField field = (IntField &&) tup->getField(this->gbfield);
 
-        if (this->gbfieldType == Types::INT_TYPE) {
-            IntField* intField = &field;
-            int intKey = intField->getValue();
-            if (this->intMap.find(intKey) == this->intMap.end()) {
-                this->intMap[intKey] = IntAggregateData();
-            }
-            aggData = this->intMap[intKey];
+        IntField* intField = &field;
+        int intKey = intField->getValue();
+        if (this->intMap.find(intKey) == this->intMap.end()) {
+            this->intMap[intKey] = IntAggregateData();
         }
-        aggData.data.push_back(aggField.getValue());
+
+        this->intMap[intKey].data.push_back(aggField.getValue());
+        this->intMap[intKey].setMin(std::min(this->intMap[intKey].getMin(), aggField.getValue()));
+        this->intMap[intKey].setMax(std::max(this->intMap[intKey].getMax(), aggField.getValue()));
+        this->intMap[intKey].setSum(this->intMap[intKey].getSum() + aggField.getValue());
+        this->intMap[intKey].increaseCount();
     }
 
-    aggData.setMin(std::min(aggData.getMin(), aggField.getValue()));
-    aggData.setMax(std::max(aggData.getMax(), aggField.getValue()));
-    aggData.setSum(aggData.getSum() + aggField.getValue());
-    aggData.increaseCount();
+
 
     // TODO pa3.2: some code goes here
 }
 
 DbIterator *IntegerAggregator::iterator() const {
-    return new IntegerAggregatorIterator(this->gbfield,this->intMap);
+    return new IntegerAggregatorIterator(this->gbfield,this->intMap, this->what);
     // TODO pa3.2: some code goes here
 }

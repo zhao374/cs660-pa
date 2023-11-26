@@ -10,8 +10,8 @@
 
 class IntAggregateData {
 private:
-    int  sum = 0, min = INT_MAX, max = INT_MIN, count = 0;
 public:
+    int  sum = 0, min = INT_MAX, max = INT_MIN, count = 0;
     std::vector<int> data;
 
 
