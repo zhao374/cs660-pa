@@ -3,9 +3,30 @@
 
 #include <db/Aggregator.h>
 #include <optional>
-#include "IntAggregateData.h"
+
 #include <unordered_map>
 namespace db {
+    class IntAggregateData {
+    private:
+    public:
+        int  sum = 0, min = 20000000, max = -20000000, count = 0;
+        std::vector<int> data;
+
+
+
+        IntAggregateData();
+        std::vector<int> getData();
+        int getSum();
+        int getMin();
+        int getMax();
+        int getCount();
+
+        void setSum(int value);
+        void setMin(int value);
+        void setMax(int value);
+        void increaseCount();
+
+    };
 
 /**
  * Knows how to compute some aggregate over a set of IntFields.
@@ -57,6 +78,7 @@ namespace db {
          */
         DbIterator *iterator() const override;
     };
+
 }
 
 #endif

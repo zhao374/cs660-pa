@@ -45,7 +45,6 @@ add_library(db
         Utility.cpp
         PlanCache.cpp
         LogicalJoinNode.cpp
-        IntAggregateData.cpp
 )
 
 target_include_directories(db PUBLIC ../include)
