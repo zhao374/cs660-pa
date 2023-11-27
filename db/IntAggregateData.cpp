@@ -3,6 +3,7 @@
 //
 
 #include "db/IntAggregateData.h"
+#include <climits>
 IntAggregateData::IntAggregateData() {
     sum = 0;
     min = INT_MAX;

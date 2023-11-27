@@ -4,7 +4,7 @@
 #include <db/Aggregator.h>
 #include <optional>
 #include "IntAggregateData.h"
-
+#include <unordered_map>
 namespace db {
 
 /**
