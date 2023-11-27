@@ -37,7 +37,7 @@ TEST(IntegerAggregatorTest, test) {
         //std::cout << tup.to_string() << std::endl;
         //std::cout << tup.getField(0).to_string() << std::endl;
         int count = ((db::IntField &) tup.getField(0)).getValue();
-        std::cout << tup.to_string() << std::endl;
+        //std::cout << tup.to_string() << std::endl;
         EXPECT_EQ(count, 12075);
     }
     printf("hahahahaha\n");
