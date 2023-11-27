@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include "db/Operator.h"
 #include "db/IntegerAggregator.h"
-
+#include <climits>
 using namespace db;
 IntAggregateData::IntAggregateData() {
     sum = 0;
