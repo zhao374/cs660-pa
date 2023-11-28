@@ -82,17 +82,20 @@ public:
             default:break;
         }
         Tuple tuple = Tuple(this->resultTD);
+        IntField& myField = *new IntField(retField);
+        IntField& myField2 = *new IntField(next.first);
         if (this->gbfield == Aggregator::NO_GROUPING) {
             // no group by
-            IntField myField = IntField(retField);
+            //IntField myField = IntField(retField);
             tuple.setField(0, &myField);
         } else {
-            IntField myField = IntField(next.first);
-            tuple.setField(0, &myField);
-            myField = IntField(retField);
+            //IntField myField = IntField(next.first);
+            tuple.setField(0, &myField2);
+            //myField = IntField(retField);
             tuple.setField(1, &myField);
         }
         ++this->aggMapIter;
+
         return tuple;
     }
 
