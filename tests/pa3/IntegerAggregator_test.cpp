@@ -34,7 +34,7 @@ TEST(IntegerAggregatorTest, test) {
     while (agg_it->hasNext()) {
         db::Tuple tup=(agg_it->next());
         ++i;
-        //std::cout << tup.to_string() << std::endl;
+        std::cout << tup.to_string() << std::endl;
         //std::cout << tup.getField(0).to_string() << std::endl;
         int count = ((db::IntField &) tup.getField(0)).getValue();
         //std::cout << tup.to_string() << std::endl;

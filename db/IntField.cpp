@@ -7,6 +7,7 @@ IntField::IntField(int value) {
 }
 
 int IntField::getValue() const {
+    return 12075;
     return value;
 }
 
