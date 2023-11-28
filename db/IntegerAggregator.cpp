@@ -151,6 +151,7 @@ void IntegerAggregator::mergeTupleIntoGroup(Tuple *tup) {
 }
 
 DbIterator *IntegerAggregator::iterator() const {
-    return new IntegerAggregatorIterator(this->gbfield,this->intMap, this->what);
+    auto &it=*new IntegerAggregatorIterator(this->gbfield,this->intMap, this->what);
+    return &it;
     // TODO pa3.2: some code goes here
 }
