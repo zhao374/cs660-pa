@@ -70,6 +70,7 @@ void HashEquiJoin::open() {
             }
         }
     }
+    Operator::open();
 
 }
 
