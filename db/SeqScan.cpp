@@ -42,6 +42,9 @@ void SeqScan::open() {
 bool SeqScan::hasNext() {
     DbFile *file = Database::getCatalog().getDatabaseFile(tableid);
     if (auto heapFile = dynamic_cast<HeapFile *>(file)) {
+        if (!itopt.has_value()) {
+            return false;
+        }
         auto it = itopt.value();
         return it != heapFile->end();
     }

@@ -12,7 +12,7 @@
 namespace db {
     class HeapFileIterator {
         int numPages;
-        HeapPageId hpid;
+        HeapPageId *hpid;
         bool end;
         HeapPageIterator *it;
         HeapPage *page;
