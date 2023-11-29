@@ -7,6 +7,7 @@
 #include <db/Tuple.h>
 #include <db/Operator.h>
 #include <db/JoinPredicate.h>
+#include "IntField.h"
 
 namespace db {
 
@@ -16,7 +17,8 @@ namespace db {
     class HashEquiJoin : public Operator {
     private:
         std::vector<Tuple> myTuples;
-        int indexOfTuples = 0;
+        std::vector<Tuple>::iterator it;
+        IntField* curKey;
 
         JoinPredicate joinPred;
         DbIterator *child1, *child2;
