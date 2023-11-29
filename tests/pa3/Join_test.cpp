@@ -5,8 +5,12 @@
 #include <db/SeqScan.h>
 #include <db/IntField.h>
 #include <db/Join.h>
+<<<<<<< HEAD
 #include "db/HashEquiJoin.h"
 
+=======
+#include <db/HashEquiJoin.h>
+>>>>>>> refs/remotes/origin/pa3
 static int count(db::DbIterator *it) {
     int i = 0;
     it->open();
