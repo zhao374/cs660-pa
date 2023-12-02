@@ -23,6 +23,7 @@ using namespace db;
   * @return An estimate of the cost of this query, in terms of cost1 and cost2
   */
 double JoinOptimizer::estimateJoinCost(int card1, int card2, double cost1, double cost2) {
+    return cost1 + (card1 * cost2) + (card1 * card2);
     // TODO pa4.2: some code goes here
 }
 

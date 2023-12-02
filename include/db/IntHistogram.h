@@ -3,6 +3,7 @@
 
 #include <db/Histogram.h>
 #include <db/Predicate.h>
+#include <vector>
 
 namespace db {
 
@@ -10,6 +11,9 @@ namespace db {
      * A class to represent a fixed-width histogram over a single integer-based field.
      */
     class IntHistogram : public Histogram {
+        std::vector<int> buckets;
+        int min, max, width, numBuckets;
+        int ntups; // Number of total values added
         // TODO pa4.1: add private members
     public:
         /**
