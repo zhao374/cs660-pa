@@ -36,6 +36,27 @@ int JoinOptimizer::estimateTableJoinCardinality(Predicate::Op joinOp,
                                                 int card1, int card2, bool t1pkey, bool t2pkey,
                                                 const std::unordered_map<std::string, TableStats> &stats,
                                                 const std::unordered_map<std::string, int> &tableAliasToId) {
+    std::string table1Name = Database::getCatalog().getTableName(tableAliasToId.at(table1Alias));
+    std::string table2Name = Database::getCatalog().getTableName(tableAliasToId.at(table2Alias));
+    int index1 = Database::getCatalog().getTupleDesc(tableAliasToId.at(table1Alias)).fieldNameToIndex(field1PureName);
+    int index2 = Database::getCatalog().getTupleDesc(tableAliasToId.at(table2Alias)).fieldNameToIndex(field2PureName);
+    TableStats tableStats1 = stats.at(table1Name);
+    TableStats tableStats2 = stats.at(table2Name);
+
+    switch (joinOp) {
+        case Predicate::Op::EQUALS:
+            if (t1pkey) {
+                // gettable1 name
+                // return tableStats2.estimateTableCardinality(tableStats2.estimateTableCardinality(index2, joinOp, ))
+            } else if (t2pkey) {
+
+            }
+            break;
+
+        default:
+
+            break;
+    }
     // TODO pa4.2: some code goes here
 }
 
@@ -58,5 +79,7 @@ int JoinOptimizer::estimateTableJoinCardinality(Predicate::Op joinOp,
  */
 std::vector<LogicalJoinNode> JoinOptimizer::orderJoins(std::unordered_map<std::string, TableStats> stats,
                                                        std::unordered_map<std::string, double> filterSelectivities) {
-    // TODO pa4.3: some code goes here
+    // TODO: how can we represent the output of the first join, in order to create a LogicalJoinNode object for the second join?
+
+
 }
