@@ -24,7 +24,10 @@ void IntHistogram::addValue(int v) {
 }
 
 double IntHistogram::estimateSelectivity(Predicate::Op op, int v) const {
+    // the pivot
     int index = (v - min) / width;
+
+    // error input
     if (index < 0 || index >= numBuckets) {
         // If the value is out of the histogram's range, return 0 or 1 based on the operation
         if (op ==Predicate::Op::LESS_THAN ||op==Predicate::Op::LESS_THAN_OR_EQ) {
@@ -42,34 +45,28 @@ double IntHistogram::estimateSelectivity(Predicate::Op op, int v) const {
             break;
         case Predicate::Op::GREATER_THAN:
             // Calculate selectivity for the bucket containing the value and all buckets to the right
-            for (int i = index + 1; i < numBuckets; i++) {
-                selectivity += buckets[i];
+            for (int i = v + 1; i <= max; i++) {
+                index = (i-min)/width;
+                selectivity += (buckets[index] / (double) width) / ntups;
             }
-            selectivity += (buckets[index] / (double) width) * (width - (v % width));
-            selectivity /= ntups;
+            break;
+        case Predicate::Op::GREATER_THAN_OR_EQ:
+            for (int i = v; i <= max; i++) {
+                index = (i-min)/width;
+                selectivity += (buckets[index] / (double) width) / ntups;
+            }
             break;
         case Predicate::Op::LESS_THAN:
-            for (int i = 0; i < index; i++) {
-                selectivity += buckets[i];
+            for (int i = v -1; i >= min; i--) {
+                index = (i-min)/width;
+                selectivity += (buckets[index] / (double) width) / ntups;
             }
-            if (index >= 0 && index < numBuckets) {
-                selectivity += (buckets[index] / (double) width) * ((v % width) / (double) width);
-            }
-            selectivity /= ntups;
             break;
-
         case Predicate::Op::LESS_THAN_OR_EQ:
-            for (int i = 0; i <= index; i++) {
-                selectivity += buckets[i];
+            for (int i = v; i >= min; i--) {
+                index = (i-min)/width;
+                selectivity += (buckets[index] / (double) width) / ntups;
             }
-            selectivity /= ntups;
-            break;
-
-        case Predicate::Op::GREATER_THAN_OR_EQ:
-            for (int i = index; i < numBuckets; i++) {
-                selectivity += buckets[i];
-            }
-            selectivity /= ntups;
             break;
 
         case Predicate::Op::NOT_EQUALS:
