@@ -43,20 +43,25 @@ int JoinOptimizer::estimateTableJoinCardinality(Predicate::Op joinOp,
     TableStats tableStats1 = stats.at(table1Name);
     TableStats tableStats2 = stats.at(table2Name);
 
+    int card = 1;
     switch (joinOp) {
         case Predicate::Op::EQUALS:
-            if (t1pkey) {
-                // gettable1 name
-                // return tableStats2.estimateTableCardinality(tableStats2.estimateTableCardinality(index2, joinOp, ))
-            } else if (t2pkey) {
-
+            if (t1pkey && !t2pkey){
+                card=card2;
+            } else if (t2pkey && !t1pkey){
+                card=card1;
+            } else {
+                //R: if both primary key or neither primary key, return the bigger one
+                card = card1>card2 ? card1 : card2;
             }
             break;
 
         default:
-
+            card = (int) (0.3* card1 * card2);
             break;
     }
+
+    return card <= 0 ? 1 : card;
     // TODO pa4.2: some code goes here
 }
 
@@ -81,5 +86,36 @@ std::vector<LogicalJoinNode> JoinOptimizer::orderJoins(std::unordered_map<std::s
                                                        std::unordered_map<std::string, double> filterSelectivities) {
     // TODO: how can we represent the output of the first join, in order to create a LogicalJoinNode object for the second join?
 
+    std::unordered_set<LogicalJoinNode> joinSet;
+    for (const auto &join : joins) {
+        joinSet.insert(join);
+    }
+
+    std::vector<std::unordered_set<LogicalJoinNode>> j = enumerateSubsets(joins, 1);
+    PlanCache optjoin;
+
+    int sizeOfj = j.size();
+    for (int i = 1; i <= sizeOfj; i++) {
+        std::vector<std::unordered_set<LogicalJoinNode>>  lenISubsetOfj = enumerateSubsets(joins, i);
+        for (const auto &s : lenISubsetOfj) {
+            double bestCostSoFar = std::numeric_limits<double>::max();
+            int bestCardSofar = std::numeric_limits<int>::max();
+            std::vector<LogicalJoinNode> bestPlanSofar;
+
+            for (const auto &s1 : s) {
+                CostCard * costcard = computeCostAndCardOfSubplan(stats, filterSelectivities, s1, s, std::numeric_limits<double>::max(), optjoin);
+
+                if (costcard->cost < bestCostSoFar) {
+                    optjoin.addPlan(const_cast<std::unordered_set<LogicalJoinNode> &>(s), costcard);
+                    bestPlanSofar = costcard->plan;
+                    bestCardSofar = costcard->card;
+                    bestCostSoFar = costcard->cost;
+                }
+            }
+
+        }
+    }
+    std::vector<LogicalJoinNode> bestJoinOrder = optjoin.get(joinSet)->plan;
+    return bestJoinOrder;
 
 }
