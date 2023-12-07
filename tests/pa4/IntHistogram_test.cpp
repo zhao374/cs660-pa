@@ -99,6 +99,16 @@ TEST(IntHistogramTest, greater_than_or_equals) {
     EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::GREATER_THAN_OR_EQ, 120), (204 * 11 / 20. + 181 + 190 + 231 + 111) / 1000., 0.001);
 }
 
+TEST(IntHistogramTest, empty) {
+    db::IntHistogram hist(10, 50, 249);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::EQUALS, 110), 0, 0.001);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::NOT_EQUALS, 110), 0, 0.001);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::LESS_THAN, 110), 0, 0.001);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::LESS_THAN_OR_EQ, 110), 0, 0.001);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::GREATER_THAN_OR_EQ, 110), 0, 0.001);
+    EXPECT_NEAR(hist.estimateSelectivity(db::Predicate::Op::GREATER_THAN, 110), 0, 0.001);
+}
+
 TEST(IntHistogramTest, small) {
     db::IntHistogram hist(10, 50, 249);
     random_data(hist);

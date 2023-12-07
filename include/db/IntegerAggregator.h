@@ -3,6 +3,7 @@
 
 #include <db/Aggregator.h>
 #include <optional>
+#include <unordered_map>
 
 namespace db {
 

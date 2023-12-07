@@ -5,6 +5,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(pa4_test
         IntHistogram_test.cpp
+        JoinOptimizer_test.cpp
 )
 
 target_link_libraries(pa4_test PRIVATE GTest::gtest_main db)
