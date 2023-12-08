@@ -44,25 +44,33 @@ double IntHistogram::estimateSelectivity(Predicate::Op op, int v) const {
             selectivity = (buckets[index] / (double) width) / ntups;
             break;
         case Predicate::Op::GREATER_THAN:
+            if (v < min) return 1;
+            if (v > max) return 0;
             // Calculate selectivity for the bucket containing the value and all buckets to the right
             for (int i = v + 1; i <= max; i++) {
-                index = (max - i)/width;
+                index = (i - min)/width;
                 selectivity += (buckets[index] / (double) width) / ntups;
             }
             break;
         case Predicate::Op::GREATER_THAN_OR_EQ:
+            if (v < min) return 1;
+            if (v > max) return 0;
             for (int i = v; i <= max; i++) {
-                index = (max - i)/width;
+                index = (i - min)/width;
                 selectivity += (buckets[index] / (double) width) / ntups;
             }
             break;
         case Predicate::Op::LESS_THAN:
+            if (v < min) return 0;
+            if (v > max) return 1;
             for (int i = v -1; i >= min; i--) {
                 index = (i-min)/width;
                 selectivity += (buckets[index] / (double) width) / ntups;
             }
             break;
         case Predicate::Op::LESS_THAN_OR_EQ:
+            if (v < min) return 1;
+            if (v > max) return 0;
             for (int i = v; i >= min; i--) {
                 index = (i-min)/width;
                 selectivity += (buckets[index] / (double) width) / ntups;
