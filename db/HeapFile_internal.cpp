@@ -61,7 +61,7 @@ HeapFileIterator HeapFile::end() const {
 // HeapFileIterator
 //
 
-HeapFileIterator::HeapFileIterator(int tableid, int numPages, bool end) : hpid(tableid, 0) {
+HeapFileIterator::HeapFileIterator(int tableid, int numPages, bool end) {
     this->numPages = numPages;
     this->end = end;
     int pid;
@@ -70,10 +70,10 @@ HeapFileIterator::HeapFileIterator(int tableid, int numPages, bool end) : hpid(t
     } else {
         pid = 0;
     }
-    hpid = {tableid, pid};
+    hpid = new HeapPageId{tableid, pid};
     if (end) {
     } else {
-        auto p = Database::getBufferPool().getPage(&hpid);
+        auto p = Database::getBufferPool().getPage(hpid);
         page = dynamic_cast<HeapPage *>(p);
         if (!page) {
             throw std::runtime_error("dynamic_cast");
@@ -84,11 +84,11 @@ HeapFileIterator::HeapFileIterator(int tableid, int numPages, bool end) : hpid(t
 }
 
 bool HeapFileIterator::operator!=(const HeapFileIterator &other) const {
-    return hpid != other.hpid || end != other.end;
+    return *hpid != *other.hpid || end != other.end;
 }
 
 Tuple &HeapFileIterator::operator*() const {
-    return *(*it);
+    return *new Tuple{*(*it)};
 }
 
 HeapFileIterator &HeapFileIterator::operator++() {
@@ -97,12 +97,12 @@ HeapFileIterator &HeapFileIterator::operator++() {
         return *this;
     }
     delete it;
-    hpid = {hpid.getTableId(), hpid.pageNumber() + 1};
-    if (hpid.pageNumber() >= numPages) {
+    hpid = new HeapPageId{hpid->getTableId(), hpid->pageNumber() + 1};
+    if (hpid->pageNumber() >= numPages) {
         end = true;
         return *this;
     }
-    auto p = Database::getBufferPool().getPage(&hpid);
+    auto p = Database::getBufferPool().getPage(hpid);
     page = dynamic_cast<HeapPage *>(p);
     if (!page) {
         throw std::runtime_error("dynamic_cast");

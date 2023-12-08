@@ -31,7 +31,7 @@ namespace db {
      *            rather than alias (see {@link #orderJoins})
      * @param filterSelectivities
      *            the selectivities of the filters over each of the tables
-     *            (where tables are indentified by their alias or name if no
+     *            (where tables are identified by their alias or name if no
      *            alias is given)
      * @param joinToRemove
      *            the join to remove from joinSet
